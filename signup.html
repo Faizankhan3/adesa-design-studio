@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adesa Design Studio - Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0&appId=867771419573506" integrity="sha384-7eTRbIQeQMACiSvLX831uwyrimZH+4wFsnUYOsNMiHaKEhLa2qhKDkIxPnTEjvjK"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .signup-section {
+            flex: 1;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand-section {
+            flex: 1;
+            background: white;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            text-align: center;
+        }
+
+        .logo {
+            width: 240px;
+            height: 240px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            object-fit: contain;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .brand-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .brand-subtitle {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .form-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .form-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-label a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .checkbox-label a:hover {
+            color: #764ba2;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .signup-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .login-link a:hover {
+            color: #764ba2;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: #999;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider-text {
+            margin: 0 15px;
+            font-size: 14px;
+        }
+
+        .social-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .social-btn i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .social-btn.facebook {
+            border-color: #1877f2;
+            color: #1877f2;
+        }
+
+        .social-btn.facebook:hover {
+            background: #1877f2;
+            color: white;
+        }
+
+        .social-btn.google {
+            border-color: #ea4335;
+            color: #ea4335;
+        }
+
+        .social-btn.google:hover {
+            background: #ea4335;
+            color: white;
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .strength-indicator {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .brand-section {
+                padding: 40px 20px;
+            }
+
+            .signup-section {
+                padding: 40px 20px;
+            }
+
+            .brand-title {
+                font-size: 24px;
+            }
+
+            .form-title {
+                font-size: 24px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="signup-section">
+            <h1 class="form-title">Create Account</h1>
+            <p class="form-subtitle">Join Adesa Design Studio today</p>
+
+            <div class="social-buttons">
+                <button type="button" class="social-btn google" id="googleSignup">
+                    <i class="fab fa-google"></i>
+                    Google
+                </button>
+                <button type="button" class="social-btn facebook" id="facebookSignup">
+                    <i class="fab fa-facebook-f"></i>
+                    Facebook
+                </button>
+            </div>
+
+            <div class="divider">
+                <div class="divider-text">OR</div>
+            </div>
+
+            <form id="signupForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstname">First Name</label>
+                        <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Last Name</label>
+                        <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter a strong password" required>
+                    <div class="strength-bar">
+                        <div class="strength-indicator" id="strengthIndicator"></div>
+                    </div>
+                    <div class="password-strength" id="strengthText">Password strength: Weak</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmpassword">Confirm Password</label>
+                    <input type="password" id="confirmpassword" name="confirmpassword" placeholder="Confirm your password" required>
+                </div>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="terms" required>
+                    I agree to the <a href="#terms">Terms and Conditions</a>
+                </label>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="newsletter">
+                    Subscribe to our newsletter for updates
+                </label>
+
+                <button type="submit" class="signup-btn">Create Account</button>
+            </form>
+
+            <p class="login-link">
+                Already have an account? <a href="login.html">Login here</a>
+            </p>
+        </div>
+
+        <div class="brand-section">
+            <img src="adesa logo.png" alt="Adesa Design Studio Logo" class="logo">
+            <div class="brand-title">Adesa Design Studio</div>
+            <div class="brand-subtitle">Your Creative Design Partner</div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Google Sign-In
+        window.onload = function() {
+            google.accounts.id.initialize({
+                client_id: '188425742368-cn56m580nup24kquoh7hnmc7adgcv6s7.apps.googleusercontent.com',
+                callback: handleGoogleSignUp
+            });
+        };
+
+        // Handle Google Sign Up response
+        function handleGoogleSignUp(response) {
+            console.log('Google Sign Up successful');
+            console.log('Token:', response.credential);
+            
+            // Decode JWT token to get user information
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            
+            const userInfo = JSON.parse(jsonPayload);
+            console.log('User Info:', userInfo);
+            
+            alert('Successfully signed up with Google!\n\nName: ' + userInfo.name + '\nEmail: ' + userInfo.email);
+            
+            // Send to your backend
+            // fetch('/api/signup/google', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ token: response.credential })
+            // })
+        }
+
+        // Google Sign Up button click handler
+        document.getElementById('googleSignup').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Trigger Google Sign-In
+            google.accounts.id.prompt();
+        });
+
+        // Facebook Sign Up
+        document.getElementById('facebookSignup').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof FB !== 'undefined') {
+                FB.login(function(response) {
+                    if (response.authResponse) {
+                        FB.api('/me', {fields: 'id,name,email,picture'}, function(user) {
+                            console.log('Facebook User Info:', user);
+                            alert('Successfully signed up with Facebook!\n\nName: ' + user.name + '\nEmail: ' + user.email);
+                            
+                            // Send to your backend
+                            // fetch('/api/signup/facebook', {
+                            //     method: 'POST',
+                            //     headers: { 'Content-Type': 'application/json' },
+                            //     body: JSON.stringify(user)
+                            // })
+                        });
+                    }
+                }, {scope: 'public_profile,email'});
+            } else {
+                alert('Facebook SDK not loaded');
+            }
+        });
+
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const indicator = document.getElementById('strengthIndicator');
+            const strengthText = document.getElementById('strengthText');
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[!@#$%^&*]/.test(password)) strength++;
+
+            const strengthLevels = ['Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
+            const colors = ['#ff6b6b', '#ffa500', '#ffd700', '#90ee90', '#32cd32'];
+
+            indicator.style.width = (strength * 25) + '%';
+            indicator.style.backgroundColor = colors[strength];
+            strengthText.textContent = 'Password strength: ' + strengthLevels[strength];
+        });
+
+        // Form submission
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmpassword').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            const firstname = document.getElementById('firstname').value;
+            const lastname = document.getElementById('lastname').value;
+            const email = document.getElementById('email').value;
+
+            // Here you would send the signup data to your server
+            console.log('Signup attempt:', { firstname, lastname, email, password });
+            alert('Account created successfully! Please connect this to your backend.');
+
+            // Example:
+            // fetch('/api/signup', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ firstname, lastname, email, password })
+            // })
+        });
+    </script>
+</body>
+</html>
