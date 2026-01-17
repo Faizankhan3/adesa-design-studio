@@ -6,7 +6,18 @@
     <title>Adesa Design Studio - Sign Up</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0&appId=867771419573506" integrity="sha384-7eTRbIQeQMACiSvLX831uwyrimZH+4wFsnUYOsNMiHaKEhLa2qhKDkIxPnTEjvjK"></script>
+    <script>
+        window.fbAsyncInit = function() {
+            console.log('FB SDK Initializing...');
+            FB.init({
+                appId: '867771419573506',
+                xfbml: true,
+                version: 'v19.0'
+            });
+            console.log('FB SDK Initialized');
+        };
+    </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0&appId=867771419573506"></script>
     <style>
         * {
             margin: 0;
@@ -60,6 +71,16 @@
             width: 240px;
             height: 240px;
             margin-bottom: 30px;
+            border-radius: 10px;
+            object-fit: contain;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-logo {
+            display: none;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
             border-radius: 10px;
             object-fit: contain;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -290,6 +311,14 @@
                 font-size: 24px;
             }
 
+            .mobile-logo {
+                display: block;
+            }
+
+            .brand-section .logo {
+                display: none;
+            }
+
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -299,6 +328,7 @@
 <body>
     <div class="container">
         <div class="signup-section">
+            <img src="adesa logo.png" alt="Adesa Design Studio Logo" class="mobile-logo">
             <h1 class="form-title">Create Account</h1>
             <p class="form-subtitle">Join Adesa Design Studio today</p>
 
@@ -379,6 +409,15 @@
     </div>
 
     <script>
+        // Initialize Facebook SDK
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '867771419573506',
+                xfbml: true,
+                version: 'v19.0'
+            });
+        };
+
         // Initialize Google Sign-In
         window.onload = function() {
             google.accounts.id.initialize({
@@ -422,24 +461,36 @@
         // Facebook Sign Up
         document.getElementById('facebookSignup').addEventListener('click', function(e) {
             e.preventDefault();
-            if (typeof FB !== 'undefined') {
+            
+            // Check if FB is available
+            if (window.FB && window.FB.login) {
                 FB.login(function(response) {
                     if (response.authResponse) {
                         FB.api('/me', {fields: 'id,name,email,picture'}, function(user) {
                             console.log('Facebook User Info:', user);
                             alert('Successfully signed up with Facebook!\n\nName: ' + user.name + '\nEmail: ' + user.email);
-                            
-                            // Send to your backend
-                            // fetch('/api/signup/facebook', {
-                            //     method: 'POST',
-                            //     headers: { 'Content-Type': 'application/json' },
-                            //     body: JSON.stringify(user)
-                            // })
                         });
+                    } else {
+                        alert('Facebook login was cancelled');
                     }
                 }, {scope: 'public_profile,email'});
             } else {
-                alert('Facebook SDK not loaded');
+                // Retry after delay
+                console.log('Waiting for FB to load...');
+                setTimeout(function() {
+                    if (window.FB && window.FB.login) {
+                        FB.login(function(response) {
+                            if (response.authResponse) {
+                                FB.api('/me', {fields: 'id,name,email,picture'}, function(user) {
+                                    console.log('Facebook User Info:', user);
+                                    alert('Successfully signed up with Facebook!\n\nName: ' + user.name + '\nEmail: ' + user.email);
+                                });
+                            }
+                        }, {scope: 'public_profile,email'});
+                    } else {
+                        alert('Facebook SDK not available. Please try again or refresh the page.');
+                    }
+                }, 1000);
             }
         });
 
@@ -492,4 +543,3 @@
     </script>
 </body>
 </html>
-
