@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Adesa Design Studio - New Customer</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			min-height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 24px;
+		}
+
+		.wrapper {
+			width: 100%;
+			max-width: 1100px;
+		}
+
+		.card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+			padding: 28px;
+			margin-bottom: 20px;
+		}
+
+		.header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 18px;
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+
+		.title {
+			font-size: 24px;
+			font-weight: 700;
+			color: #2d2d2d;
+		}
+
+		.subtitle {
+			font-size: 14px;
+			color: #666;
+			margin-top: 4px;
+		}
+
+		form {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 16px;
+		}
+
+		.full {
+			grid-column: span 2;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 6px;
+			font-weight: 600;
+			color: #333;
+			font-size: 14px;
+		}
+
+		input, textarea {
+			width: 100%;
+			padding: 12px 14px;
+			border: 2px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 14px;
+			transition: border-color 0.2s;
+			font-family: inherit;
+		}
+
+		input:focus, textarea:focus {
+			outline: none;
+			border-color: #667eea;
+		}
+
+		textarea {
+			min-height: 90px;
+			resize: vertical;
+		}
+
+		.field-error {
+			color: #c0392b;
+			font-size: 12px;
+			margin-top: 4px;
+			display: none;
+		}
+
+		.actions {
+			margin-top: 10px;
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			padding: 12px 18px;
+			border-radius: 8px;
+			border: 2px solid transparent;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+		}
+
+		.btn:active {
+			transform: translateY(0);
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+		}
+
+		.btn-primary:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 10px 24px rgba(118, 75, 162, 0.35);
+		}
+
+		.btn-ghost {
+			background: white;
+			color: #4b4b4b;
+			border-color: #e0e0e0;
+		}
+
+		.btn-ghost:hover {
+			border-color: #667eea;
+			color: #333;
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+		}
+
+		.table-card {
+			margin-top: 10px;
+			overflow: hidden;
+		}
+
+		.search-input {
+			min-width: 260px;
+			padding: 10px 12px;
+			border: 2px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 14px;
+			transition: border-color 0.2s;
+		}
+
+		.search-input:focus {
+			outline: none;
+			border-color: #667eea;
+		}
+
+		.name-cell {
+			position: relative;
+			padding-right: 36px;
+		}
+
+		.name-text {
+			display: inline-block;
+			max-width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.delete-btn {
+			display: none;
+			position: absolute;
+			right: 8px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 22px;
+			height: 22px;
+			border-radius: 50%;
+			border: 1px solid #e0e0e0;
+			background: #f8f8f8;
+			color: #c0392b;
+			font-size: 14px;
+			line-height: 1;
+			cursor: pointer;
+			align-items: center;
+			justify-content: center;
+			transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+		}
+
+		.name-cell:hover .delete-btn,
+		.delete-btn:focus-visible {
+			display: inline-flex;
+		}
+
+		.delete-btn:hover {
+			background: #ffe9e6;
+			border-color: #f1b0a7;
+			color: #a93226;
+			box-shadow: 0 2px 8px rgba(192, 57, 43, 0.18);
+		}
+
+		.measurement-btn {
+			padding: 6px 14px;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			border: none;
+			border-radius: 5px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: transform 0.2s, box-shadow 0.2s;
+		}
+
+		.measurement-btn:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+		}
+
+		.measurement-btn:active {
+			transform: translateY(0);
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th, td {
+			padding: 12px 10px;
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 14px;
+			text-align: left;
+		}
+
+		th {
+			background: #f9f9fb;
+			font-weight: 700;
+			color: #444;
+		}
+
+		tr:hover td {
+			background: #fafaff;
+		}
+
+		.empty-state {
+			text-align: center;
+			padding: 18px;
+			color: #777;
+			font-size: 14px;
+		}
+
+		@media (max-width: 768px) {
+			form {
+				grid-template-columns: 1fr;
+			}
+
+			.full {
+				grid-column: span 1;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="card">
+			<div class="header">
+				<div>
+					<div class="title">New Customer</div>
+					<div class="subtitle">Add and save customer details</div>
+				</div>
+				<button class="btn btn-ghost" id="backHome">Back to Home</button>
+			</div>
+
+			<form id="customerForm">
+				<div>
+					<label for="customerId">Customer ID (auto)</label>
+					<input type="text" id="customerId" name="customerId" readonly>
+					<div class="field-error" id="error-customerId"></div>
+				</div>
+				<div>
+					<label for="fullName">Full Name *</label>
+					<input type="text" id="fullName" name="fullName" placeholder="Enter full name" required>
+					<div class="field-error" id="error-fullName"></div>
+				</div>
+				<div>
+					<label for="email">Email *</label>
+					<input type="email" id="email" name="email" placeholder="name@example.com" required>
+					<div class="field-error" id="error-email"></div>
+				</div>
+				<div>
+					<label for="phone">Phone *</label>
+					<input type="tel" id="phone" name="phone" placeholder="+1 555 123 4567" required>
+					<div class="field-error" id="error-phone"></div>
+				</div>
+				<div>
+					<label for="company">Company</label>
+					<input type="text" id="company" name="company" placeholder="Company (optional)">
+					<div class="field-error" id="error-company"></div>
+				</div>
+				<div class="full">
+					<label for="address">Address</label>
+					<input type="text" id="address" name="address" placeholder="Street, City, State">
+					<div class="field-error" id="error-address"></div>
+				</div>
+				<div class="full">
+					<label for="notes">Notes</label>
+					<textarea id="notes" name="notes" placeholder="Any special notes"></textarea>
+					<div class="field-error" id="error-notes"></div>
+				</div>
+			</form>
+
+			<div class="actions">
+				<button class="btn btn-primary" id="saveCustomer">Save Customer</button>
+				<button class="btn btn-ghost" id="resetForm">Reset</button>
+			</div>
+		</div>
+
+		<div class="card table-card">
+			<div class="header" style="margin-bottom: 8px;">
+				<div>
+					<div class="title" style="font-size: 20px;">Saved Customers</div>
+					<div class="subtitle">Stored locally in your browser</div>
+				</div>
+				<input id="searchCustomers" class="search-input" type="search" placeholder="Search by name, email, phone, or ID" aria-label="Search customers">
+			</div>
+
+			<div id="tableContainer">
+				<div class="empty-state">No customers saved yet</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const storageKey = 'adesaCustomers';
+
+		const form = document.getElementById('customerForm');
+		const saveBtn = document.getElementById('saveCustomer');
+		const resetBtn = document.getElementById('resetForm');
+		const tableContainer = document.getElementById('tableContainer');
+		const backHomeBtn = document.getElementById('backHome');
+		const idInput = document.getElementById('customerId');
+		const searchInput = document.getElementById('searchCustomers');
+		const errorEls = {
+			customerId: document.getElementById('error-customerId'),
+			fullName: document.getElementById('error-fullName'),
+			email: document.getElementById('error-email'),
+			phone: document.getElementById('error-phone'),
+			company: document.getElementById('error-company'),
+			address: document.getElementById('error-address'),
+			notes: document.getElementById('error-notes'),
+		};
+
+		function generateCustomerId() {
+			const rand = Math.random().toString(36).substr(2, 5).toUpperCase();
+			return 'A-' + rand;
+		}
+
+		function getUniqueId(existing) {
+			const seen = new Set((existing || []).map(c => c.customerId));
+			let id;
+			do {
+				id = generateCustomerId();
+			} while (seen.has(id));
+			return id;
+		}
+
+		function setNewId() {
+			const customers = getCustomers();
+			idInput.value = getUniqueId(customers);
+		}
+
+		function getCustomers() {
+			try {
+				const data = localStorage.getItem(storageKey);
+				return data ? JSON.parse(data) : [];
+			} catch (e) {
+				console.error('Failed to read customers', e);
+				return [];
+			}
+		}
+
+		function saveCustomers(list) {
+			localStorage.setItem(storageKey, JSON.stringify(list));
+		}
+
+		function clearErrors() {
+			Object.values(errorEls).forEach(el => {
+				if (!el) return;
+				el.textContent = '';
+				el.style.display = 'none';
+			});
+		}
+
+		function setError(field, message) {
+			const el = errorEls[field];
+			if (!el) return;
+			el.textContent = message;
+			el.style.display = 'block';
+		}
+
+		function renderTable() {
+			const currentUser = localStorage.getItem('adesaUserEmail');
+			const allCustomers = getCustomers();
+			const customers = currentUser ? allCustomers.filter(c => c.userEmail === currentUser) : allCustomers;
+			if (!customers.length) {
+				tableContainer.innerHTML = '<div class="empty-state">No customers saved yet</div>';
+				return;
+			}
+			const term = (searchInput?.value || '').trim().toLowerCase();
+			const filtered = term
+				? customers.filter(c => [c.customerId, c.fullName, c.email, c.phone]
+					.some(val => (val || '').toLowerCase().includes(term)))
+				: customers;
+
+			if (!filtered.length) {
+				tableContainer.innerHTML = '<div class="empty-state">No customers match your search</div>';
+				return;
+			}
+
+			const rows = filtered.map((c, idx) => `
+				<tr>
+					<td>${idx + 1}</td>
+					<td>${c.customerId || '—'}</td>
+					<td class="name-cell">
+						<span class="name-text">${c.fullName || ''}</span>
+						<button class="delete-btn" data-delete-id="${c.customerId}" aria-label="Delete customer">&times;</button>
+					</td>
+					<td>${c.email || ''}</td>
+					<td>${c.phone || ''}</td>
+				<td>
+					<button class="measurement-btn" onclick="window.location.href='measurementsheet.html?customer=${c.customerId}'">
+						Measurements
+					</button>
+				</td>
+			</tr>
+		`).join('');
+
+		tableContainer.innerHTML = `
+			<table>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Phone</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					${rows}
+				</tbody>
+			</table>
+		`;
+	}
+
+	function deleteCustomer(customerId) {
+		if (!confirm('Delete this customer? This cannot be undone.')) return;
+		const allCustomers = getCustomers();
+		const updated = allCustomers.filter(c => c.customerId !== customerId);
+		saveCustomers(updated);
+		renderTable();
+	}
+
+		saveBtn.addEventListener('click', () => {
+			if (!form.reportValidity()) return;
+
+			clearErrors();
+
+		// Get current logged-in user
+		const currentUser = localStorage.getItem('adesaUserEmail');
+		if (!currentUser) {
+			alert('Please log in first');
+			window.location.href = 'login.html';
+			return;
+		}
+
+		const formData = new FormData(form);
+			const allCustomers = getCustomers();
+			const customers = currentUser ? allCustomers.filter(c => c.userEmail === currentUser) : allCustomers;
+			const normalizedEmail = (formData.get('email') || '').trim().toLowerCase();
+			const normalizedPhone = (formData.get('phone') || '').replace(/\D/g, '');
+			const normalizedName = (formData.get('fullName') || '').trim().toLowerCase();
+			const normalizedCompany = (formData.get('company') || '').trim().toLowerCase();
+			const normalizedAddress = (formData.get('address') || '').trim().toLowerCase();
+			const normalizedNotes = (formData.get('notes') || '').trim().toLowerCase();
+
+			const exactMatch = customers.find(c => {
+				const cEmail = (c.email || '').trim().toLowerCase();
+				const cPhone = (c.phone || '').replace(/\D/g, '');
+				const cName = (c.fullName || '').trim().toLowerCase();
+				const cCompany = (c.company || '').trim().toLowerCase();
+				const cAddress = (c.address || '').trim().toLowerCase();
+				const cNotes = (c.notes || '').trim().toLowerCase();
+				return normalizedName === cName
+					&& normalizedEmail === cEmail
+					&& normalizedPhone === cPhone
+					&& normalizedCompany === cCompany
+					&& normalizedAddress === cAddress
+					&& normalizedNotes === cNotes;
+			});
+
+			if (exactMatch) {
+				setError('fullName', 'This exact customer already exists.');
+				return;
+			}
+			let customerId = formData.get('customerId');
+
+			if (!customerId || allCustomers.some(c => c.customerId === customerId)) {
+				customerId = getUniqueId(allCustomers);
+			}
+
+			const entry = {
+				customerId,
+				fullName: formData.get('fullName').trim(),
+				email: formData.get('email').trim(),
+				phone: formData.get('phone').trim(),
+				company: formData.get('company').trim(),
+				address: formData.get('address').trim(),
+				notes: formData.get('notes').trim(),
+				userEmail: currentUser,
+				createdAt: new Date().toISOString()
+			};
+
+			allCustomers.push(entry);
+			saveCustomers(allCustomers);
+			renderTable();
+			form.reset();
+			setNewId();
+			alert('Customer saved locally.');
+		});
+
+		resetBtn.addEventListener('click', () => {
+			form.reset();
+			setNewId();
+			clearErrors();
+		});
+
+		backHomeBtn.addEventListener('click', () => {
+			window.location.href = 'homepage.html';
+		});
+
+		searchInput?.addEventListener('input', () => {
+			renderTable();
+		});
+
+		['customerId', 'fullName', 'email', 'phone', 'company', 'address', 'notes'].forEach(fieldId => {
+			const el = document.getElementById(fieldId);
+			if (!el) return;
+			el.addEventListener('input', () => {
+				const err = errorEls[fieldId];
+				if (err) {
+					err.textContent = '';
+					err.style.display = 'none';
+				}
+			});
+		});
+
+		tableContainer.addEventListener('click', (event) => {
+			const target = event.target.closest('[data-delete-id]');
+			if (!target) return;
+			const customerId = target.getAttribute('data-delete-id');
+			deleteCustomer(customerId);
+		});
+
+		// Initial render
+		renderTable();
+		setNewId();
+	</script>
+</body>
+</html>

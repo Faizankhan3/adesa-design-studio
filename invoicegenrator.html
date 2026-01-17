@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Invoice - Adesa Design Studio</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f5f5;
+			padding: 20px;
+		}
+
+		.no-print {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.btn {
+			padding: 12px 24px;
+			margin: 0 8px;
+			border-radius: 8px;
+			border: none;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+		}
+
+		.btn-primary:hover {
+			box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+			transform: translateY(-1px);
+		}
+
+		.btn-ghost {
+			background: white;
+			color: #4b4b4b;
+			border: 2px solid #e0e0e0;
+		}
+
+		.btn-ghost:hover {
+			border-color: #667eea;
+			color: #667eea;
+		}
+
+		.invoice-container {
+			max-width: 900px;
+			margin: 0 auto;
+			background: white;
+			padding: 40px;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		}
+
+		.company-header {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		.company-name {
+			font-size: 32px;
+			font-weight: 700;
+			color: #667eea;
+			letter-spacing: 1px;
+		}
+
+		.company-logo {
+			max-width: 200px;
+			height: auto;
+		}
+
+		.company-details {
+			text-align: center;
+			margin-bottom: 30px;
+			padding-bottom: 20px;
+			border-bottom: 2px solid #e0e0e0;
+		}
+
+		.company-details .address {
+			font-size: 14px;
+			color: #2d2d2d;
+			margin-bottom: 8px;
+			line-height: 1.6;
+		}
+
+		.company-details .contact {
+			font-size: 14px;
+			color: #666;
+		}
+
+		.invoice-info {
+			margin-bottom: 30px;
+			padding: 20px;
+			background: #f9f9fb;
+			border-radius: 8px;
+		}
+
+		.info-row {
+			display: flex;
+			padding: 8px 0;
+			font-size: 14px;
+		}
+
+		.info-label {
+			font-weight: 600;
+			color: #2d2d2d;
+			min-width: 140px;
+		}
+
+		.info-value {
+			color: #2d2d2d;
+			font-weight: 700;
+		}
+
+		.invoice-table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-bottom: 30px;
+			border: 2px solid #2d2d2d;
+		}
+
+		.invoice-table thead {
+			background: white;
+			color: #2d2d2d;
+		}
+
+		.invoice-table th {
+			padding: 12px;
+			text-align: left;
+			font-weight: 700;
+			font-size: 14px;
+			border: 2px solid #2d2d2d;
+		}
+
+		.invoice-table th.text-right,
+		.invoice-table td.text-right {
+			text-align: right;
+		}
+
+		.invoice-table th.text-center,
+		.invoice-table td.text-center {
+			text-align: center;
+		}
+
+		.invoice-table tbody tr {
+			border: 2px solid #2d2d2d;
+		}
+
+		.invoice-table tbody tr:hover {
+			background: #fafaff;
+		}
+
+		.invoice-table td {
+			padding: 14px 12px;
+			font-size: 14px;
+			color: #2d2d2d;
+			border: 2px solid #2d2d2d;
+		}
+
+		.total-section {
+			display: flex;
+			justify-content: flex-end;
+			margin-bottom: 40px;
+		}
+
+		.total-box {
+			min-width: 300px;
+		}
+
+		.total-row {
+			display: flex;
+			justify-content: space-between;
+			padding: 12px 16px;
+			font-size: 14px;
+		}
+
+		.total-row.grand {
+			background: #d9d9d9;
+			color: #000;
+			font-size: 18px;
+			font-weight: 800;
+			border-radius: 6px;
+			margin-top: 8px;
+		}
+
+		.invoice-footer {
+			margin-top: 40px;
+			padding-top: 20px;
+			border-top: 2px solid #e0e0e0;
+			text-align: center;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.invoice-footer p {
+			margin-bottom: 6px;
+		}
+
+		@media print {
+			body {
+				background: white;
+				padding: 0;
+			}
+
+			.no-print {
+				display: none !important;
+			}
+
+			.invoice-container {
+				box-shadow: none;
+				padding: 20px;
+			}
+
+			@page {
+				margin: 15mm;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.invoice-container {
+				padding: 20px;
+			}
+
+			.company-logo {
+				max-width: 150px;
+			}
+
+			.invoice-table {
+				font-size: 12px;
+			}
+
+			.invoice-table th,
+			.invoice-table td {
+				padding: 8px 6px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="no-print">
+		<button class="btn btn-primary" id="printBtn">Print / Save as PDF</button>
+		<button class="btn btn-ghost" onclick="window.close()">Close</button>
+	</div>
+
+	<div class="invoice-container" id="invoiceContent">
+		<div class="company-header">
+			<img src="adesa logo.png" alt="Adesa Design Studio" class="company-logo">
+		</div>
+
+		<div class="company-details">
+			<p class="address">14/105, Anand Nagar, Near Vakola Police Station<br>Santacruz (East), Mumbai – 400055</p>
+			<p class="contact">Phone: 8898880471 | Email: faiyazkhan_99@yahoo.co.in</p>
+		</div>
+
+		<div class="invoice-info">
+			<div class="info-row">
+				<span class="info-label">Invoice Number:</span>
+				<span class="info-value" id="invoiceNumber">0001</span>
+			</div>
+			<div class="info-row">
+				<span class="info-label">Date:</span>
+				<span class="info-value" id="invoiceDate"></span>
+			</div>
+			<div class="info-row">
+				<span class="info-label">Customer ID:</span>
+				<span class="info-value" id="customerId"></span>
+			</div>
+			<div class="info-row">
+				<span class="info-label">Client Name:</span>
+				<span class="info-value" id="customerName"></span>
+			</div>
+		<div class="info-row">
+			<span class="info-label">Phone Number:</span>
+			<span class="info-value" id="customerPhone"></span>
+		</div>
+	</div>
+
+	<table class="invoice-table">
+		<thead>
+			<tr>
+				<th style="width: 80px;" class="text-center">Sr.No</th>
+				<th>Description</th>
+				<th style="width: 100px;" class="text-center">Qty</th>
+				<th style="width: 120px;" class="text-right">Value</th>
+				<th style="width: 140px;" class="text-right">Amount</th>
+			</tr>
+		</thead>
+		<tbody id="invoiceItems">
+		</tbody>
+	</table>
+
+		<div class="total-section">
+			<div class="total-box">
+				<div class="total-row grand">
+					<span>Grand Total:</span>
+					<span id="grandTotal">₹0.00</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="invoice-footer">
+			<p><strong>Thank you for your business!</strong></p>
+			<p>This is a computer-generated invoice and does not require a signature.</p>
+			<p>For any queries, please contact us at info@adesadesign.com</p>
+		</div>
+	</div>
+
+	<script>
+		const invoiceStorageKey = 'lastInvoiceNumber';
+
+		function getNextInvoiceNumber() {
+			try {
+				const lastNumber = parseInt(localStorage.getItem(invoiceStorageKey) || '0');
+				const nextNumber = lastNumber + 1;
+				localStorage.setItem(invoiceStorageKey, nextNumber.toString());
+				return nextNumber;
+			} catch (e) {
+				console.error('Error getting invoice number', e);
+				return 1;
+			}
+		}
+
+		function formatInvoiceNumber(num) {
+			return num.toString().padStart(4, '0');
+		}
+
+		function formatDate(dateStr) {
+			const date = new Date(dateStr);
+			const day = String(date.getDate()).padStart(2, '0');
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const year = date.getFullYear();
+			return `${day}-${month}-${year}`;
+		}
+
+		function loadInvoiceData() {
+			try {
+				const data = localStorage.getItem('pendingInvoice');
+				if (!data) {
+					document.body.innerHTML = '<div style="text-align:center;padding:40px;"><h2>No invoice data found</h2><p>Please create an invoice from the billing page.</p></div>';
+					return;
+				}
+
+				const invoice = JSON.parse(data);
+				const { customer, items, grandTotal, date } = invoice;
+
+				// Set invoice number
+				const invoiceNum = getNextInvoiceNumber();
+				document.getElementById('invoiceNumber').textContent = formatInvoiceNumber(invoiceNum);
+				document.getElementById('invoiceDate').textContent = formatDate(date);
+
+				// Set customer details
+				document.getElementById('customerId').textContent = customer.customerId || '—';
+				document.getElementById('customerName').textContent = customer.fullName || '—';			document.getElementById('customerPhone').textContent = customer.phone || '—';
+				// Set invoice items
+				const itemsHtml = items.map((item, idx) => `
+					<tr>
+						<td class="text-center">${idx + 1}</td>
+						<td>${item.desc}</td>
+						<td class="text-center">${item.qty}</td>
+						<td class="text-right">₹${item.value.toFixed(2)}</td>
+						<td class="text-right">₹${item.amount.toFixed(2)}</td>
+					</tr>
+				`).join('');
+
+				document.getElementById('invoiceItems').innerHTML = itemsHtml;
+				document.getElementById('grandTotal').textContent = `₹${grandTotal.toFixed(2)}`;
+
+				// Store invoice data for later saving (when user prints)
+				window.pendingInvoiceData = {
+					invoiceNumber: invoiceNum,
+					customerId: customer.customerId,
+					customerName: customer.fullName,
+					grandTotal: grandTotal,
+					date: date,
+					items: items
+				};
+
+				// Clear pending invoice from storage
+				localStorage.removeItem('pendingInvoice');
+
+			} catch (e) {
+				console.error('Error loading invoice data', e);
+				alert('Error loading invoice data');
+			}
+		}
+
+		// Save invoice to history when user prints
+		function saveInvoiceToHistory() {
+			if (window.pendingInvoiceData) {
+				try {
+					const invoiceHistory = JSON.parse(localStorage.getItem('adesaInvoiceHistory') || '[]');
+					invoiceHistory.push(window.pendingInvoiceData);
+					localStorage.setItem('adesaInvoiceHistory', JSON.stringify(invoiceHistory));
+					window.pendingInvoiceData = null; // Clear after saving
+				} catch (e) {
+					console.error('Error saving invoice to history', e);
+				}
+			}
+		}
+
+		// Load invoice on page load
+		loadInvoiceData();
+
+		// Add print button event listener
+		document.getElementById('printBtn').addEventListener('click', function() {
+			saveInvoiceToHistory();
+			window.print();
+		});
+	</script>
+</body>
+</html>

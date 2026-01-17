@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Adesa Design Studio - Existing Customers</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			min-height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 24px;
+		}
+
+		.wrapper {
+			width: 100%;
+			max-width: 1100px;
+		}
+
+		.card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+			padding: 28px;
+		}
+
+		.header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 18px;
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+
+		.title {
+			font-size: 24px;
+			font-weight: 700;
+			color: #2d2d2d;
+		}
+
+		.subtitle {
+			font-size: 14px;
+			color: #666;
+			margin-top: 4px;
+		}
+
+		.search-input {
+			min-width: 280px;
+			padding: 10px 14px;
+			border: 2px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 14px;
+			transition: border-color 0.2s;
+		}
+
+		.search-input:focus {
+			outline: none;
+			border-color: #667eea;
+		}
+
+		.btn {
+			padding: 12px 18px;
+			border-radius: 8px;
+			border: 2px solid transparent;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+		}
+
+		.btn:active {
+			transform: translateY(0);
+		}
+
+		.btn-ghost {
+			background: white;
+			color: #4b4b4b;
+			border-color: #e0e0e0;
+		}
+
+		.btn-ghost:hover {
+			border-color: #667eea;
+			color: #333;
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 16px;
+		}
+
+		th, td {
+			padding: 14px 12px;
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 14px;
+			text-align: left;
+		}
+
+		th {
+			background: #f9f9fb;
+			font-weight: 700;
+			color: #444;
+		}
+
+		tr:hover td {
+			background: #fafaff;
+		}
+
+		.empty-state {
+			text-align: center;
+			padding: 32px;
+			color: #777;
+			font-size: 14px;
+		}
+
+		.pagination {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 10px;
+			margin-top: 20px;
+		}
+
+		.page-btn {
+			padding: 8px 14px;
+			border-radius: 6px;
+			border: 1px solid #e0e0e0;
+			background: white;
+			color: #4b4b4b;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+
+		.page-btn:hover:not(:disabled) {
+			border-color: #667eea;
+			color: #667eea;
+		}
+
+		.page-btn:disabled {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
+
+		.page-btn.active {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			border-color: transparent;
+		}
+
+		.page-info {
+			font-size: 14px;
+			color: #666;
+		}
+
+		.action-btn {
+			padding: 6px 12px;
+			border-radius: 6px;
+			border: 1.5px solid #667eea;
+			background: white;
+			color: #667eea;
+			font-size: 12px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.15s ease;
+			text-decoration: none;
+			display: inline-block;
+		}
+
+		.action-btn:hover {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			transform: translateY(-1px);
+			box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+		}
+
+		.action-btn.disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+			pointer-events: none;
+		}
+
+		.no-measurement-text {
+			font-size: 12px;
+			color: #999;
+			text-align: center;
+		}
+
+		.action-cell {
+			display: flex;
+			gap: 8px;
+			justify-content: center;
+		}
+
+		@media (max-width: 768px) {
+			.header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.search-input {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="card">
+			<div class="header">
+				<div>
+					<div class="title">Existing Customers</div>
+					<div class="subtitle">Browse and search your customer list</div>
+				</div>
+				<button class="btn btn-ghost" id="backHome">Back to Home</button>
+			</div>
+
+			<input id="searchCustomers" class="search-input" type="search" placeholder="Search by name, phone, or customer ID" aria-label="Search customers">
+
+			<div id="tableContainer">
+				<div class="empty-state">No customers found</div>
+			</div>
+
+			<div class="pagination" id="pagination" style="display: none;">
+				<button class="page-btn" id="prevBtn">Previous</button>
+				<span class="page-info" id="pageInfo">Page 1</span>
+				<button class="page-btn" id="nextBtn">Next</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const storageKey = 'adesaCustomers';
+		const getCurrentUser = () => localStorage.getItem('adesaUserEmail');
+		const itemsPerPage = 10;
+		let currentPage = 1;
+		let filteredCustomers = [];
+
+		function getLastInvoiceDate(customerId) {
+			try {
+				const invoiceHistory = JSON.parse(localStorage.getItem('adesaInvoiceHistory') || '[]');
+				const customerInvoices = invoiceHistory.filter(inv => inv.customerId === customerId);
+				if (!customerInvoices.length) return '—';
+				
+				// Sort by date descending and get the most recent
+				customerInvoices.sort((a, b) => new Date(b.date) - new Date(a.date));
+				const lastInvoice = customerInvoices[0];
+				const date = new Date(lastInvoice.date);
+				const day = String(date.getDate()).padStart(2, '0');
+				const month = String(date.getMonth() + 1).padStart(2, '0');
+				const year = date.getFullYear();
+				return `${day}-${month}-${year}`;
+			} catch (e) {
+				return '—';
+			}
+		}
+
+		function hasMeasurements(customerId) {
+			try {
+				const measurementSheets = JSON.parse(localStorage.getItem('adesaMeasurementSheets') || '[]');
+				return measurementSheets.some(m => m.customerId === customerId);
+			} catch (e) {
+				return false;
+			}
+		}
+
+		const searchInput = document.getElementById('searchCustomers');
+		const tableContainer = document.getElementById('tableContainer');
+		const backHomeBtn = document.getElementById('backHome');
+		const pagination = document.getElementById('pagination');
+		const prevBtn = document.getElementById('prevBtn');
+		const nextBtn = document.getElementById('nextBtn');
+		const pageInfo = document.getElementById('pageInfo');
+
+		function getCustomers() {
+			try {
+				const data = localStorage.getItem(storageKey);
+				const all = data ? JSON.parse(data) : [];
+				const currentUser = getCurrentUser();
+				return currentUser ? all.filter(c => c.userEmail === currentUser) : all;
+			} catch (e) {
+				console.error('Failed to read customers', e);
+				return [];
+			}
+		}
+
+		function filterCustomers(term) {
+			const customers = getCustomers();
+			if (!term) return customers;
+
+			const normalized = term.trim().toLowerCase();
+			return customers.filter(c => 
+				[c.customerId, c.fullName, c.phone]
+					.some(val => (val || '').toLowerCase().includes(normalized))
+			);
+		}
+
+		function renderTable() {
+			const term = searchInput.value;
+			filteredCustomers = filterCustomers(term);
+
+			if (!filteredCustomers.length) {
+				tableContainer.innerHTML = '<div class="empty-state">No customers found</div>';
+				pagination.style.display = 'none';
+				return;
+			}
+
+			const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
+			const startIndex = (currentPage - 1) * itemsPerPage;
+			const endIndex = startIndex + itemsPerPage;
+			const pageCustomers = filteredCustomers.slice(startIndex, endIndex);
+
+			const rows = pageCustomers.map((c, idx) => {
+				const hasM = hasMeasurements(c.customerId);
+				const measurementCell = hasM 
+					? `<div class="action-cell"><a href="measurementsheet.html?customer=${c.customerId}&autoload=true" class="action-btn">View</a></div>`
+					: `<div class="no-measurement-text">Not found</div>`;
+				
+				return `
+				<tr>
+					<td>${startIndex + idx + 1}</td>
+					<td>${c.customerId || '—'}</td>
+					<td>${c.fullName || ''}</td>
+					<td>${c.email || ''}</td>
+					<td>${c.phone || ''}</td>
+					<td>${getLastInvoiceDate(c.customerId)}</td>
+					<td>${measurementCell}</td>
+					<td><div class="action-cell"><a href="Billing.html?customer=${c.customerId}" class="action-btn">Create</a></div></td>
+				</tr>
+			`;}).join('');
+
+			tableContainer.innerHTML = `
+				<table>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Customer ID</th>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Phone</th>
+							<th>Last Invoice</th>
+							<th>Measurements</th>
+							<th>Invoice</th>
+						</tr>
+					</thead>
+					<tbody>
+						${rows}
+					</tbody>
+				</table>
+			`;
+
+			// Update pagination
+			if (totalPages > 1) {
+				pagination.style.display = 'flex';
+				pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+				prevBtn.disabled = currentPage === 1;
+				nextBtn.disabled = currentPage === totalPages;
+			} else {
+				pagination.style.display = 'none';
+			}
+		}
+
+		searchInput.addEventListener('input', () => {
+			currentPage = 1;
+			renderTable();
+		});
+
+		prevBtn.addEventListener('click', () => {
+			if (currentPage > 1) {
+				currentPage--;
+				renderTable();
+			}
+		});
+
+		nextBtn.addEventListener('click', () => {
+			const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
+			if (currentPage < totalPages) {
+				currentPage++;
+				renderTable();
+			}
+		});
+
+		backHomeBtn.addEventListener('click', () => {
+			window.location.href = 'homepage.html';
+		});
+
+		// Initial render
+		renderTable();
+	</script>
+</body>
+</html>

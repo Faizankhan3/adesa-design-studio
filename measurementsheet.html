@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Adesa Design Studio - Measurement Sheet</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	<style>
+		* { box-sizing: border-box; }
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f5f5;
+			padding: 20px;
+		}
+
+		.sheet {
+			max-width: 900px;
+			margin: 0 auto;
+			background: white;
+			padding: 28px;
+			box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+			border: 1px solid #dcdcdc;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.logo {
+			height: 110px;
+			object-fit: contain;
+			margin-bottom: 10px;
+		}
+
+		.title {
+			font-size: 18px;
+			font-weight: 700;
+			letter-spacing: 0.4px;
+			margin-top: 4px;
+		}
+
+		.info-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 12px 16px;
+			margin-bottom: 18px;
+		}
+
+		.customer-search-wrapper {
+			position: relative;
+			width: 100%;
+			margin-bottom: 16px;
+		}
+
+		.customer-search {
+			width: 100%;
+			padding: 12px 14px;
+			border: 1.5px solid #cfcfcf;
+			border-radius: 6px;
+			font-size: 14px;
+			transition: border-color 0.2s;
+		}
+
+		.customer-search:focus {
+			outline: none;
+			border-color: #667eea;
+		}
+
+		.customer-dropdown {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			max-height: 250px;
+			overflow-y: auto;
+			background: white;
+			border: 2px solid #667eea;
+			border-radius: 8px;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+			z-index: 100;
+			display: none;
+			margin-top: 4px;
+		}
+
+		.customer-dropdown.active {
+			display: block;
+		}
+
+		.customer-option {
+			padding: 12px 14px;
+			cursor: pointer;
+			font-size: 14px;
+			border-bottom: 1px solid #f0f0f0;
+			transition: background 0.15s ease;
+		}
+
+		.customer-option:last-child {
+			border-bottom: none;
+		}
+
+		.customer-option:hover {
+			background: #f9f9fb;
+		}
+
+		.no-results {
+			padding: 12px 14px;
+			text-align: center;
+			color: #999;
+			font-size: 14px;
+		}
+
+		.selected-customer-display {
+			padding: 10px 14px;
+			background: #f0f4ff;
+			border-radius: 6px;
+			margin-bottom: 12px;
+			font-size: 14px;
+			color: #667eea;
+			font-weight: 600;
+			display: none;
+		}
+
+		.selected-customer-display.active {
+			display: block;
+		}
+
+		.error-text {
+			color: #c0392b;
+			font-size: 12px;
+			margin-top: -10px;
+			margin-bottom: 10px;
+			display: none;
+		}
+
+		.info-grid label {
+			font-weight: 600;
+			font-size: 14px;
+			color: #333;
+			margin-bottom: 4px;
+			display: block;
+		}
+
+		.info-grid input,
+		.info-grid textarea {
+			width: 100%;
+			padding: 10px 12px;
+			border: 1.5px solid #cfcfcf;
+			border-radius: 6px;
+			font-size: 14px;
+			font-family: inherit;
+		}
+
+		.info-grid textarea {
+			min-height: 48px;
+			resize: vertical;
+		}
+
+		.table-wrapper {
+			overflow-x: auto;
+			border: 2px solid #2d2d2d;
+		}
+
+		.btn {
+			padding: 10px 16px;
+			border-radius: 6px;
+			border: 1.5px solid transparent;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+		}
+
+		.btn:active { transform: translateY(0); }
+
+		.btn-primary {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			box-shadow: 0 8px 18px rgba(102, 126, 234, 0.32);
+			border-color: #667eea;
+		}
+
+		.btn-primary:hover { transform: translateY(-1px); }
+
+		.btn-ghost {
+			background: white;
+			color: #333;
+			border-color: #d6d6d6;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+		}
+
+		.btn-ghost:hover { transform: translateY(-1px); }
+
+		.btn-small { padding: 8px 12px; font-size: 13px; }
+
+		.actions {
+			display: flex;
+			gap: 10px;
+			margin: 12px 0 16px;
+			justify-content: flex-start;
+		}
+
+		.saved-wrapper {
+			margin-top: 18px;
+			border: 1.5px solid #e2e2e2;
+			border-radius: 8px;
+			background: #fafafa;
+			padding: 12px;
+		}
+
+		.saved-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 10px;
+			margin-bottom: 8px;
+		}
+
+		.saved-title {
+			font-weight: 700;
+			font-size: 15px;
+			color: #333;
+		}
+
+		.saved-list {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.saved-search {
+			width: 100%;
+			padding: 10px 12px;
+			border: 1.5px solid #d6d6d6;
+			border-radius: 6px;
+			font-size: 14px;
+			margin-bottom: 10px;
+		}
+
+		.saved-list.empty {
+			color: #777;
+			font-size: 13px;
+		}
+
+		.saved-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			padding: 10px 12px;
+			background: white;
+			border: 1px solid #e6e6e6;
+			border-radius: 6px;
+		}
+
+		.saved-meta { display: flex; flex-direction: column; gap: 4px; }
+		.saved-name { font-weight: 700; color: #222; }
+		.saved-sub { font-size: 12px; color: #666; }
+		.saved-buttons { display: flex; gap: 8px; }
+
+		.btn-delete {
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			border: 1px solid #e0e0e0;
+			background: #fff;
+			color: #c0392b;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.btn-delete:hover { background: #ffecec; }
+
+		.customer-measurements {
+			margin-top: 12px;
+			padding: 12px;
+			background: #f0f4ff;
+			border: 1.5px solid #d6e4ff;
+			border-radius: 6px;
+			display: none;
+		}
+
+		.customer-measurements.active {
+			display: block;
+		}
+
+		.customer-measurements-title {
+			font-weight: 700;
+			font-size: 14px;
+			color: #333;
+			margin-bottom: 8px;
+		}
+
+		.customer-measurements-list {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+
+		.customer-measurements-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 10px;
+			padding: 8px 10px;
+			background: white;
+			border: 1px solid #d6e4ff;
+			border-radius: 4px;
+			font-size: 13px;
+		}
+
+		.customer-measurements-info { color: #666; }
+		.customer-measurements-date { color: #999; font-size: 12px; }
+
+		.btn {
+			padding: 10px 16px;
+			border-radius: 6px;
+			border: 1.5px solid transparent;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+		}
+
+		.btn:active { transform: translateY(0); }
+
+		.btn-primary {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			box-shadow: 0 8px 18px rgba(102, 126, 234, 0.32);
+			border-color: #667eea;
+		}
+
+		.btn-primary:hover { transform: translateY(-1px); }
+
+		.actions {
+			display: flex;
+			gap: 10px;
+			margin: 12px 0 16px;
+			justify-content: flex-start;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		table th,
+		table td {
+			border: 1.8px solid #2d2d2d;
+			padding: 10px 8px;
+			font-size: 14px;
+			text-align: left;
+		}
+
+		table th {
+			background: #d9d9d9;
+			font-weight: 700;
+			text-align: center;
+		}
+
+		table td input {
+			width: 100%;
+			border: none;
+			font-size: 14px;
+			font-family: inherit;
+			padding: 6px 4px;
+			text-align: center;
+		}
+
+		table td input:focus { outline: none; }
+
+		.measure-col { width: 55%; }
+		.no-col { width: 12%; text-align: center; }
+		.inches-col { width: 20%; }
+
+		@media (max-width: 640px) {
+			.info-grid { grid-template-columns: 1fr; }
+			.logo { height: 80px; }
+		}
+	</style>
+	</head>
+	<body>
+		<div class="sheet">
+			<div class="header">
+				<img src="adesa logo.png" alt="Adesa Design Studio" class="logo">
+				<div class="title">MEASUREMENT CHART</div>
+			</div>
+
+			<div style="margin-bottom: 16px;">
+				<button id="backBtn" class="btn btn-ghost btn-small" type="button">← Back</button>
+			</div>
+
+<div class="customer-search-wrapper">
+			<input type="text" class="customer-search" id="customerSearch" placeholder="Search customer by ID, name, or phone...">
+			<div class="customer-dropdown" id="customerDropdown"></div>
+		</div>
+		<div id="selectedCustomerDisplay" class="selected-customer-display"></div>
+			<div id="customerError" class="error-text">Please select a customer.</div>
+
+		<div id="customerMeasurements" class="customer-measurements">
+			<div class="customer-measurements-title">Previous Measurements</div>
+			<div id="customerMeasurementsList" class="customer-measurements-list"></div>
+		</div>
+
+			<div class="info-grid">
+				<div>
+					<label for="clientName">Name of Client</label>
+					<input id="clientName" type="text" placeholder="Enter client name">
+				</div>
+				<div>
+					<label for="phone">Telephone Number</label>
+					<input id="phone" type="tel" placeholder="Enter phone number">
+				</div>
+				<div>
+					<label for="remarks">Remarks</label>
+					<textarea id="remarks" placeholder="Notes / remarks"></textarea>
+				</div>
+				<div>
+					<label for="date">Date</label>
+					<input id="date" type="date">
+				</div>
+			</div>
+
+		<div class="actions" style="margin-top: 16px; margin-bottom: 10px;">
+			<button id="saveSheet" class="btn btn-primary btn-small" type="button">Save Measurement</button>
+		<button id="resetMeasurements" class="btn btn-primary btn-small" type="button">Reset</button>
+		<button id="downloadPDF" class="btn btn-primary btn-small" type="button">Download PDF</button>
+	</div>
+	
+	<div class="table-wrapper">
+		<table>
+					<thead>
+						<tr>
+							<th class="no-col">Sr.No</th>
+							<th class="measure-col">Measurements</th>
+							<th class="inches-col">(In Inches)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td class="no-col">1.</td><td>SHOULDER TO BUST</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">2.</td><td>SHOULDER TO UNDER BUST</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">3.</td><td>SHOULDER TO WAIST</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">4.</td><td>SHOULDER TO KNEE</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">5.</td><td>DRESS LENGTH</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">6.</td><td>ABOVE BUST</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">7.</td><td>AROUND BUST</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">8.</td><td>UNDER BUST</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">9.</td><td>WAIST</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">10.</td><td>LOW WAIST</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">11.</td><td>HIPS</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">12.</td><td>SHOULDER</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">13.</td><td>ACROSS FRONT</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">14.</td><td>ACROSS BACK</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">15.</td><td>SLEEVE LENGTH FULL</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">16.</td><td>SLEEVE LENGTH — 3/4</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">17.</td><td>SLEEVE LENGTH — HALF</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">18.</td><td>ARM WIDTH</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">19.</td><td>ARM HOLE</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">20.</td><td>FRONT NECK LOW</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">21.</td><td>BACK NECK LOW</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">22.</td><td>COLLAR</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">23.</td><td>CHOLI LENGTH</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">24.</td><td>CHOLI HEM</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">25.</td><td>TROUSER LENGTH (CHURIDAAR / SALWAAR)</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">26.</td><td>THIGH ROUND</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">27.</td><td>MID THIGH ROUND</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">28.</td><td>KNEE ROUND</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">29.</td><td>CALF ROUND</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">30.</td><td>ANKLE ROUND</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">31.</td><td>SHOE SIZE</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+						<tr><td class="no-col">32.</td><td>HEIGHT</td><td><input type="number" step="0.01" min="0" inputmode="decimal"></td></tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="saved-wrapper">
+				<div class="saved-header">
+					<div class="saved-title">Saved Measurement Sheets</div>
+					<button id="refreshSaved" class="btn btn-ghost btn-small" type="button">Refresh</button>
+				</div>
+				<input id="savedSearch" class="saved-search" type="text" placeholder="Search by name, ID, or date">
+			<div id="savedList" class="saved-list empty">No saved measurements yet.</div>
+			</div>
+		</div>
+
+		<script>
+			const storageKey = 'adesaCustomers';
+	const getCurrentUser = () => localStorage.getItem('adesaUserEmail');
+	const getUserCustomers = () => {
+		try {
+			const data = localStorage.getItem(storageKey);
+			const all = data ? JSON.parse(data) : [];
+			const currentUser = getCurrentUser();
+			return currentUser ? all.filter(c => c.userEmail === currentUser) : all;
+		} catch (e) {
+			console.error('Failed to read customers', e);
+			return [];
+		}
+	};
+		const customerSearch = document.getElementById('customerSearch');
+		const customerDropdown = document.getElementById('customerDropdown');
+		const selectedCustomerDisplay = document.getElementById('selectedCustomerDisplay');
+		const clientNameInput = document.getElementById('clientName');
+		const phoneInput = document.getElementById('phone');
+		const remarksInput = document.getElementById('remarks');
+		const dateInput = document.getElementById('date');
+		const saveBtn = document.getElementById('saveSheet');
+		const tableBody = document.querySelector('.table-wrapper tbody');
+		const customerError = document.getElementById('customerError');
+		const savedList = document.getElementById('savedList');
+		const savedSearch = document.getElementById('savedSearch');
+		const refreshSavedBtn = document.getElementById('refreshSaved');
+		const customerMeasurements = document.getElementById('customerMeasurements');
+		const customerMeasurementsList = document.getElementById('customerMeasurementsList');
+		let selectedCustomer = null;
+		function getCustomers() {
+			try {
+				const data = localStorage.getItem(storageKey);
+				return data ? JSON.parse(data) : [];
+			} catch (e) {
+				console.error('Failed to read customers', e);
+				return [];
+			}
+		}
+
+		function filterCustomers(term) {
+		const customers = getUserCustomers();
+
+			const normalized = term.trim().toLowerCase();
+			return customers.filter(c =>
+				[c.customerId, c.fullName, c.phone].some(val =>
+					(val || '').toLowerCase().includes(normalized)
+				)
+			);
+		}
+
+		function showDropdown(customers) {
+			if (!customers.length) {
+				customerDropdown.innerHTML = '<div class="no-results">No customers found</div>';
+				customerDropdown.classList.add('active');
+				return;
+			}
+
+			customerDropdown.innerHTML = customers.map(c => `
+				<div class="customer-option" data-customer-id="${c.customerId}">
+					<strong>${c.customerId}</strong> - ${c.fullName}<br>
+					<small style="color: #666;">${c.phone}</small>
+				</div>
+			`).join('');
+			customerDropdown.classList.add('active');
+		}
+
+		function hideDropdown() {
+			customerDropdown.classList.remove('active');
+		}
+
+		function selectCustomer(customer) {
+			selectedCustomer = customer;
+			customerSearch.value = `${customer.customerId} - ${customer.fullName}`;
+			selectedCustomerDisplay.innerHTML = `✓ Selected: ${customer.fullName} (${customer.customerId}) - ${customer.phone}`;
+			selectedCustomerDisplay.classList.add('active');
+			customerError.style.display = 'none';
+			hideDropdown();
+
+			// Auto-fill fields
+			clientNameInput.value = customer.fullName || '';
+			phoneInput.value = customer.phone || '';
+			remarksInput.value = customer.notes || '';
+			setTodayIfEmpty();
+		
+		// Clear all measurement inputs
+		const measurementInputs = tableBody.querySelectorAll('input[type="number"]');
+		measurementInputs.forEach(input => {
+			input.value = '';
+		});
+		
+		showCustomerMeasurements(customer.customerId);
+	}
+
+customerSearch.addEventListener('input', (e) => {
+	const term = e.target.value.trim();
+	if (term.length === 0) {
+		hideDropdown();
+		selectedCustomer = null;
+		selectedCustomerDisplay.classList.remove('active');
+		return;
+	}
+	const filtered = filterCustomers(term);
+	showDropdown(filtered);
+});
+
+customerSearch.addEventListener('focus', () => {
+	if (customerSearch.value && !selectedCustomer) {
+		const filtered = filterCustomers(customerSearch.value);
+		showDropdown(filtered);
+	}
+});
+
+customerDropdown.addEventListener('click', (e) => {
+	const option = e.target.closest('.customer-option');
+	if (!option) return;
+
+	const customerId = option.dataset.customerId;
+	const customers = getCustomers();
+	const customer = customers.find(c => c.customerId === customerId);
+	if (customer) {
+		selectCustomer(customer);
+	}
+});
+
+document.addEventListener('click', (e) => {
+if (!e.target.closest('.customer-search-wrapper')) {
+	hideDropdown();
+}
+});
+
+function showCustomerMeasurements(customerId) {
+const allMeasurements = getSavedSheets().filter(m => m.customerId === customerId);
+if (!allMeasurements.length) {
+	customerMeasurements.classList.remove('active');
+	return;
+}
+customerMeasurements.classList.add('active');
+customerMeasurementsList.innerHTML = '';
+allMeasurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4).forEach(m => {
+	const item = document.createElement('div');
+	item.className = 'customer-measurements-item';
+	item.innerHTML = `
+		<div>
+			<div class="customer-measurements-info">${m.date || 'No date'}</div>
+			<div class="customer-measurements-date">${new Date(m.createdAt).toLocaleDateString()}</div>
+		</div>
+		<button class="btn btn-ghost btn-small load-customer-measurement" data-id="${m.id}">Load</button>
+	`;
+	customerMeasurementsList.appendChild(item);
+});
+}
+
+customerMeasurementsList.addEventListener('click', (e) => {
+const btn = e.target.closest('.load-customer-measurement');
+if (btn) {
+	const id = btn.dataset.id;
+	const entry = getSavedSheets().find(item => item.id === id);
+	if (entry) loadSheet(entry);
+}
+});
+
+saveBtn.addEventListener('click', () => {
+	console.log('Save button clicked');
+	console.log('Selected customer:', selectedCustomer);
+	setTodayIfEmpty();
+	if (!selectedCustomer) {
+		alert('Please select a customer before saving.');
+		customerSearch.focus();
+		customerError.style.display = 'block';
+		return;
+	}
+	customerError.style.display = 'none';
+	const measurements = Array.from(tableBody.querySelectorAll('tr')).map(row => {
+		const label = row.cells[1]?.textContent.trim() || '';
+		const value = row.querySelector('input')?.value.trim() || '';
+		return { label, value };
+	});
+
+	const currentUser = getCurrentUser();
+	if (!currentUser) {
+		alert('Please log in first');
+		window.location.href = 'login.html';
+		return;
+	}
+
+	const entry = {
+		id: `MS-${Date.now()}`,
+		customerId: selectedCustomer.customerId || null,
+		clientName: clientNameInput.value.trim(),
+		phone: phoneInput.value.trim(),
+		remarks: remarksInput.value.trim(),
+		date: dateInput.value,
+		measurements,
+		userEmail: currentUser,
+		createdAt: new Date().toISOString()
+	};
+
+	console.log('Saving entry:', entry);
+
+	try {
+		const existing = localStorage.getItem('adesaMeasurementSheets');
+		const list = existing ? JSON.parse(existing) : [];
+		list.push(entry);
+		localStorage.setItem('adesaMeasurementSheets', JSON.stringify(list));
+		console.log('Saved successfully');
+		alert('Measurement sheet saved locally.');
+		renderSavedList();
+	} catch (e) {
+		console.error('Failed to save measurement sheet', e);
+		alert('Could not save. Please try again.');
+	}
+});
+
+function getSavedSheets() {
+	try {
+		const raw = localStorage.getItem('adesaMeasurementSheets');
+		return raw ? JSON.parse(raw) : [];
+	} catch (e) {
+		console.error('Failed to read saved sheets', e);
+		return [];
+	}
+}
+
+function ensureCustomerOption(customerId, name) {
+	// This function is deprecated - we use search dropdown now
+	// if (!customerId) return;
+	// const exists = Array.from(customerSelect.options).some(opt => opt.value === customerId);
+	// if (!exists) {
+	// 	const opt = document.createElement('option');
+	// 	opt.value = customerId;
+	// 	opt.textContent = `${customerId} - ${name || 'Saved customer'}`.trim();
+	// 	customerSelect.appendChild(opt);
+	// }
+}
+
+function applyMeasurements(measurements) {
+	const rows = Array.from(tableBody.querySelectorAll('tr'));
+	rows.forEach(row => {
+		const label = row.cells[1]?.textContent.trim() || '';
+		const input = row.querySelector('input');
+		const match = (measurements || []).find(m => m.label === label);
+		if (input) input.value = match ? (match.value || '') : '';
+	});
+}
+
+function loadSheet(entry) {
+	const customers = getCustomers();
+	const customer = customers.find(c => c.customerId === entry.customerId);
+	if (customer) {
+		selectCustomer(customer);
+	}
+	clientNameInput.value = entry.clientName || '';
+	phoneInput.value = entry.phone || '';
+	remarksInput.value = entry.remarks || '';
+	dateInput.value = entry.date || '';
+	applyMeasurements(entry.measurements || []);
+}
+
+function loadCustomers() {
+	// This function can be used to populate initial customer data if needed
+	// Currently customers are loaded dynamically during search
+}
+
+function setTodayIfEmpty() {
+	if (!dateInput.value) {
+		const today = new Date();
+		const yyyy = today.getFullYear();
+		const mm = String(today.getMonth() + 1).padStart(2, '0');
+		const dd = String(today.getDate()).padStart(2, '0');
+		dateInput.value = `${yyyy}-${mm}-${dd}`;
+	}
+}
+
+function renderSavedList(filterTerm = '') {
+	const currentUser = getCurrentUser();
+	const allSheets = getSavedSheets();
+	const userSheets = currentUser ? allSheets.filter(s => s.userEmail === currentUser) : allSheets;
+	const list = userSheets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+	let filtered = list;
+	if (filterTerm.toLowerCase().trim()) {
+		const term = filterTerm.toLowerCase().trim();
+		filtered = list.filter(entry => {
+			const name = (entry.clientName || '').toLowerCase();
+			const id = (entry.customerId || '').toLowerCase();
+			const date = (entry.date || '').toLowerCase();
+			return name.includes(term) || id.includes(term) || date.includes(term);
+		});
+	}
+	if (!filtered.length) {
+		savedList.textContent = list.length ? 'No matching results.' : 'No saved measurements yet.';
+		savedList.classList.add('empty');
+		return;
+	}
+	savedList.classList.remove('empty');
+	savedList.innerHTML = '';
+	filtered.forEach(entry => {
+		const item = document.createElement('div');
+		item.className = 'saved-item';
+		item.innerHTML = `
+			<div class="saved-meta">
+				<div class="saved-name">${entry.clientName || 'Unnamed client'}</div>
+				<div class="saved-sub">ID: ${entry.customerId || '—'} • Date: ${entry.date || '—'}</div>
+			</div>
+			<div class="saved-buttons">
+				<button class="btn btn-ghost btn-small load-sheet" data-id="${entry.id}">Load</button>
+				<button class="btn-delete delete-sheet" data-id="${entry.id}" title="Delete">✕</button>
+			</div>
+		`;
+		savedList.appendChild(item);
+	});
+}
+
+savedSearch.addEventListener('input', (e) => {
+	renderSavedList(e.target.value);
+});
+
+savedList.addEventListener('click', (e) => {
+	const loadBtn = e.target.closest('.load-sheet');
+	if (loadBtn) {
+		const id = loadBtn.dataset.id;
+		const entry = getSavedSheets().find(item => item.id === id);
+		if (entry) loadSheet(entry);
+		return;
+	}
+	const delBtn = e.target.closest('.delete-sheet');
+	if (delBtn) {
+		const id = delBtn.dataset.id;
+		if (confirm('Delete this measurement sheet?')) {
+			let list = getSavedSheets();
+			list = list.filter(item => item.id !== id);
+			try {
+				localStorage.setItem('adesaMeasurementSheets', JSON.stringify(list));
+				renderSavedList(savedSearch.value);
+			} catch (e) {
+				console.error('Failed to delete', e);
+				alert('Could not delete. Please try again.');
+			}
+		}
+	}
+});
+
+refreshSavedBtn.addEventListener('click', renderSavedList);
+
+// Reset button - clears only measurement values
+document.getElementById('resetMeasurements').addEventListener('click', () => {
+	if (confirm('Are you sure you want to reset all measurements? This will clear all values in the table.')) {
+		tableBody.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+	}
+});
+
+// Download PDF button - exports measurement sheet as PDF
+document.getElementById('downloadPDF').addEventListener('click', () => {
+	if (!selectedCustomer) {
+		alert('Please select a customer first.');
+		return;
+	}
+
+	const { jsPDF } = window.jspdf;
+	const doc = new jsPDF();
+	
+	// Add Logo (if exists)
+	const logoImg = document.querySelector('.logo');
+	let y = 10;
+	if (logoImg && logoImg.complete) {
+		try {
+			const canvas = document.createElement('canvas');
+			canvas.width = logoImg.naturalWidth;
+			canvas.height = logoImg.naturalHeight;
+			const ctx = canvas.getContext('2d');
+			ctx.drawImage(logoImg, 0, 0);
+			const imgData = canvas.toDataURL('image/png');
+			doc.addImage(imgData, 'PNG', 85, y, 40, 15);
+			y += 18;
+		} catch (e) {
+			console.log('Logo not available');
+			y = 10;
+		}
+	}
+	
+	// Header
+	doc.setFontSize(10);
+	doc.setFont(undefined, 'bold');
+	doc.text('MEASUREMENT CHART', 105, y, { align: 'center' });
+	y += 8;
+	
+	// Customer Details Section - More compact
+	doc.setFontSize(8);
+	doc.setFont(undefined, 'bold');
+	doc.text(`Customer ID: ${selectedCustomer.customerId || ''}`, 15, y);
+	doc.text(`Date: ${dateInput.value || ''}`, 120, y);
+	y += 4;
+	doc.text(`Name: ${clientNameInput.value || ''}`, 15, y);
+	doc.text(`Phone: ${phoneInput.value || ''}`, 120, y);
+	y += 4;
+	if (remarksInput.value) {
+		doc.text(`Remarks: ${remarksInput.value}`, 15, y);
+		y += 4;
+	}
+	doc.setFont(undefined, 'normal');
+	
+	// Table setup - Compact dimensions
+	y += 2;
+	const tableX = 15;
+	const tableWidth = 180;
+	const col1Width = 15;  // Sr.No - reduced
+	const col2Width = 125; // Measurements - increased
+	const col3Width = 40;  // In Inches
+	const rowHeight = 5.5;  // Reduced row height to fit all on one page
+	
+	// Draw table header
+	doc.setFillColor(217, 217, 217);
+	doc.rect(tableX, y, tableWidth, rowHeight, 'FD');
+	
+	doc.setFontSize(8);
+	doc.setFont(undefined, 'bold');
+	doc.setTextColor(0);
+	doc.text('Sr.No', tableX + col1Width/2, y + 3.5, { align: 'center' });
+	doc.text('Measurements', tableX + col1Width + col2Width/2, y + 3.5, { align: 'center' });
+	doc.text('(In Inches)', tableX + col1Width + col2Width + col3Width/2, y + 3.5, { align: 'center' });
+	
+	// Draw header borders
+	doc.setLineWidth(0.3);
+	doc.rect(tableX, y, tableWidth, rowHeight);
+	doc.line(tableX + col1Width, y, tableX + col1Width, y + rowHeight);
+	doc.line(tableX + col1Width + col2Width, y, tableX + col1Width + col2Width, y + rowHeight);
+	
+	y += rowHeight;
+	
+	// Table Body
+	doc.setFont(undefined, 'normal');
+	doc.setFontSize(7);
+	const rows = Array.from(tableBody.querySelectorAll('tr'));
+	
+	rows.forEach((row, index) => {
+		const srNo = row.cells[0]?.textContent.trim() || '';
+		const label = row.cells[1]?.textContent.trim() || '';
+		const value = row.querySelector('input')?.value.trim() || '';
+		
+		// Draw row
+		doc.rect(tableX, y, tableWidth, rowHeight);
+		doc.line(tableX + col1Width, y, tableX + col1Width, y + rowHeight);
+		doc.line(tableX + col1Width + col2Width, y, tableX + col1Width + col2Width, y + rowHeight);
+		
+		// Add text
+		doc.text(srNo, tableX + col1Width/2, y + 3.8, { align: 'center' });
+		doc.text(label, tableX + col1Width + 2, y + 3.8);
+		doc.text(value, tableX + col1Width + col2Width + col3Width/2, y + 3.8, { align: 'center' });
+		
+		y += rowHeight;
+	});
+	
+	// Footer
+	y += 2;
+	doc.setFontSize(7);
+	doc.setTextColor(100);
+	doc.text(`Generated on ${new Date().toLocaleString()}`, 105, y, { align: 'center' });
+	
+	// Save PDF
+	const fileName = `Measurement_${selectedCustomer.customerId}_${dateInput.value || 'sheet'}.pdf`;
+	doc.save(fileName);
+});
+
+// Back button - navigate to previous page
+document.getElementById('backBtn').addEventListener('click', () => {
+	window.history.back();
+});
+
+// Check for customer ID in URL and auto-select
+function autoSelectCustomerFromURL() {
+	const urlParams = new URLSearchParams(window.location.search);
+	const customerId = urlParams.get('customer');
+	const autoload = urlParams.get('autoload');
+	
+	if (customerId) {
+		const customers = getCustomers();
+		const customer = customers.find(c => c.customerId === customerId);
+		if (customer) {
+			selectCustomer(customer);
+			
+			// Auto-load most recent measurement only if autoload parameter is true
+			if (autoload === 'true') {
+				const allMeasurements = getSavedSheets().filter(m => m.customerId === customerId);
+				if (allMeasurements.length > 0) {
+					// Sort by creation date descending and get the most recent
+					allMeasurements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+					const mostRecent = allMeasurements[0];
+					loadSheet(mostRecent);
+				}
+			}
+		}
+	}
+}
+
+// Initialize
+loadCustomers();
+setTodayIfEmpty();
+renderSavedList();
+autoSelectCustomerFromURL();
+</script>
+</body>
+	</html>    

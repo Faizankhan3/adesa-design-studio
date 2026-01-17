@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Data</title>
+</head>
+<body>
+    <h1>Debug LocalStorage Data</h1>
+    <button onclick="showData()">Show All Data</button>
+    <button onclick="clearAll()">Clear All Data</button>
+    <pre id="output" style="background: #f4f4f4; padding: 20px; border-radius: 5px;"></pre>
+
+    <script>
+        function showData() {
+            const output = document.getElementById('output');
+            const data = {
+                currentUser: localStorage.getItem('adesaUserEmail'),
+                loggedIn: localStorage.getItem('adesaLoggedIn'),
+                userName: localStorage.getItem('adesaUserName'),
+                users: JSON.parse(localStorage.getItem('adesaUsers') || '[]'),
+                customers: JSON.parse(localStorage.getItem('adesaCustomers') || '[]'),
+                measurements: JSON.parse(localStorage.getItem('adesaMeasurementSheets') || '[]')
+            };
+            
+            output.textContent = JSON.stringify(data, null, 2);
+            
+            console.log('=== CURRENT SESSION ===');
+            console.log('User:', data.currentUser);
+            console.log('Logged In:', data.loggedIn);
+            
+            console.log('\n=== USERS ===');
+            console.log('Total users:', data.users.length);
+            data.users.forEach(u => console.log(`- ${u.email} (${u.firstname} ${u.lastname})`));
+            
+            console.log('\n=== CUSTOMERS ===');
+            console.log('Total customers:', data.customers.length);
+            const withEmail = data.customers.filter(c => c.userEmail);
+            const withoutEmail = data.customers.filter(c => !c.userEmail);
+            console.log('With userEmail:', withEmail.length);
+            console.log('Without userEmail:', withoutEmail.length);
+            
+            console.log('\n=== MEASUREMENTS ===');
+            console.log('Total measurements:', data.measurements.length);
+            const withEmailM = data.measurements.filter(m => m.userEmail);
+            const withoutEmailM = data.measurements.filter(m => !m.userEmail);
+            console.log('With userEmail:', withEmailM.length);
+            console.log('Without userEmail:', withoutEmailM.length);
+        }
+        
+        function clearAll() {
+            if (confirm('Clear ALL data? This cannot be undone!')) {
+                localStorage.removeItem('adesaUsers');
+                localStorage.removeItem('adesaCustomers');
+                localStorage.removeItem('adesaMeasurementSheets');
+                localStorage.removeItem('adesaLoggedIn');
+                localStorage.removeItem('adesaUserEmail');
+                localStorage.removeItem('adesaUserName');
+                alert('All data cleared!');
+                showData();
+            }
+        }
+        
+        showData();
+    </script>
+</body>
+</html>

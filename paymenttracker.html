@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Adesa Design Studio - Payment Tracker</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			min-height: 100vh;
+			padding: 24px;
+		}
+
+		.wrapper {
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+
+		.card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+			padding: 28px;
+			margin-bottom: 20px;
+		}
+
+		.header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 18px;
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+
+		.title {
+			font-size: 24px;
+			font-weight: 700;
+			color: #2d2d2d;
+		}
+
+		.subtitle {
+			font-size: 14px;
+			color: #666;
+			margin-top: 4px;
+		}
+
+		.btn {
+			padding: 12px 18px;
+			border-radius: 8px;
+			border: 2px solid transparent;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.15s ease;
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			box-shadow: 0 8px 18px rgba(102, 126, 234, 0.32);
+		}
+
+		.btn-primary:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 10px 22px rgba(102, 126, 234, 0.4);
+		}
+
+		.btn-ghost {
+			background: white;
+			color: #4b4b4b;
+			border-color: #e0e0e0;
+		}
+
+		.btn-ghost:hover {
+			border-color: #667eea;
+			color: #333;
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+		}
+
+		.btn-small {
+			padding: 8px 14px;
+			font-size: 13px;
+		}
+
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 16px;
+			margin-bottom: 24px;
+		}
+
+		.stat-card {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			padding: 20px;
+			border-radius: 10px;
+			color: white;
+		}
+
+		.stat-card.cash {
+			background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+		}
+
+		.stat-card.online {
+			background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+		}
+
+		.stat-card.pending {
+			background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+		}
+
+		.stat-label {
+			font-size: 13px;
+			opacity: 0.9;
+			margin-bottom: 8px;
+		}
+
+		.stat-value {
+			font-size: 28px;
+			font-weight: 700;
+		}
+
+		.form-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 16px;
+			margin-bottom: 20px;
+		}
+
+		.form-group {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.form-group label {
+			font-weight: 600;
+			font-size: 14px;
+			color: #333;
+			margin-bottom: 6px;
+		}
+
+		.form-group input,
+		.form-group select,
+		.form-group textarea {
+			padding: 10px 12px;
+			border: 2px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 14px;
+			font-family: inherit;
+			transition: border-color 0.2s;
+		}
+
+		.form-group input:focus,
+		.form-group select:focus,
+		.form-group textarea:focus {
+			outline: none;
+			border-color: #667eea;
+		}
+
+		.form-group textarea {
+			min-height: 60px;
+			resize: vertical;
+		}
+
+		.search-input {
+			width: 100%;
+			max-width: 400px;
+			padding: 10px 14px;
+			border: 2px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 14px;
+			margin-bottom: 16px;
+		}
+
+		.search-input:focus {
+			outline: none;
+			border-color: #667eea;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 16px;
+		}
+
+		th, td {
+			padding: 14px 12px;
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 14px;
+			text-align: left;
+		}
+
+		th {
+			background: #f9f9fb;
+			font-weight: 700;
+			color: #444;
+		}
+
+		tr:hover td {
+			background: #fafaff;
+		}
+
+		.badge {
+			display: inline-block;
+			padding: 4px 10px;
+			border-radius: 12px;
+			font-size: 12px;
+			font-weight: 600;
+		}
+
+		.badge-cash {
+			background: #d4edda;
+			color: #155724;
+		}
+
+		.badge-online {
+			background: #d1ecf1;
+			color: #0c5460;
+		}
+
+		.badge-paid {
+			background: #d4edda;
+			color: #155724;
+		}
+
+		.badge-partial {
+			background: #fff3cd;
+			color: #856404;
+		}
+
+		.badge-pending {
+			background: #f8d7da;
+			color: #721c24;
+		}
+
+		.empty-state {
+			text-align: center;
+			padding: 32px;
+			color: #777;
+			font-size: 14px;
+		}
+
+		.delete-btn {
+			padding: 6px 12px;
+			border-radius: 6px;
+			border: 1px solid #c0392b;
+			background: white;
+			color: #c0392b;
+			font-size: 12px;
+			cursor: pointer;
+			transition: all 0.15s;
+		}
+
+		.delete-btn:hover {
+			background: #c0392b;
+			color: white;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0, 0, 0, 0.5);
+			z-index: 1000;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.modal.active {
+			display: flex;
+		}
+
+		.modal-content {
+			background: white;
+			border-radius: 12px;
+			padding: 28px;
+			max-width: 600px;
+			width: 90%;
+			max-height: 90vh;
+			overflow-y: auto;
+		}
+
+		.modal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+
+		.modal-title {
+			font-size: 20px;
+			font-weight: 700;
+			color: #2d2d2d;
+		}
+
+		.close-btn {
+			background: none;
+			border: none;
+			font-size: 24px;
+			color: #666;
+			cursor: pointer;
+			padding: 0;
+			width: 30px;
+			height: 30px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+		}
+
+		.close-btn:hover {
+			background: #f0f0f0;
+		}
+
+		.customer-search-wrapper {
+			position: relative;
+			width: 100%;
+		}
+
+		.customer-dropdown {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			max-height: 200px;
+			overflow-y: auto;
+			background: white;
+			border: 2px solid #667eea;
+			border-radius: 8px;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+			z-index: 100;
+			display: none;
+			margin-top: 4px;
+		}
+
+		.customer-dropdown.active {
+			display: block;
+		}
+
+		.customer-option {
+			padding: 10px 12px;
+			cursor: pointer;
+			font-size: 13px;
+			border-bottom: 1px solid #f0f0f0;
+			transition: background 0.15s ease;
+		}
+
+		.customer-option:last-child {
+			border-bottom: none;
+		}
+
+		.customer-option:hover {
+			background: #f9f9fb;
+		}
+
+		.no-results {
+			padding: 10px 12px;
+			text-align: center;
+			color: #999;
+			font-size: 13px;
+		}
+
+		@media (max-width: 768px) {
+			.form-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.stats-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="card">
+			<div class="header">
+				<div>
+					<div class="title">Payment Tracker</div>
+					<div class="subtitle">Track and manage customer payments</div>
+				</div>
+				<div style="display: flex; gap: 10px;">
+					<button class="btn btn-primary" id="addPaymentBtn">+ Add Payment</button>
+					<button class="btn btn-ghost" id="backHomeBtn">Back to Home</button>
+				</div>
+			</div>
+
+			<div class="stats-grid">
+				<div class="stat-card">
+					<div class="stat-label">Total Received</div>
+					<div class="stat-value" id="totalReceived">₹0.00</div>
+				</div>
+				<div class="stat-card cash">
+					<div class="stat-label">Cash Payments</div>
+					<div class="stat-value" id="cashTotal">₹0.00</div>
+				</div>
+				<div class="stat-card online">
+					<div class="stat-label">Online Payments</div>
+					<div class="stat-value" id="onlineTotal">₹0.00</div>
+				</div>
+				<div class="stat-card pending">
+					<div class="stat-label">Pending Amount</div>
+					<div class="stat-value" id="pendingTotal">₹0.00</div>
+				</div>
+			</div>
+
+			<input type="text" id="searchPayments" class="search-input" placeholder="Search by customer name, invoice number, or date...">
+
+			<div id="tableContainer">
+				<div class="empty-state">No payments recorded yet</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Add Payment Modal -->
+	<div class="modal" id="paymentModal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="modal-title">Add Payment</div>
+				<button class="close-btn" id="closeModal">&times;</button>
+			</div>
+
+			<div class="form-grid">
+				<div class="form-group">
+					<label for="customerName">Customer Name *</label>
+					<div class="customer-search-wrapper">
+						<input type="text" id="customerName" placeholder="Search or type customer name" required>
+						<div class="customer-dropdown" id="customerDropdown"></div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="invoiceNumber">Invoice Number</label>
+					<input type="text" id="invoiceNumber" placeholder="Optional">
+				</div>
+				<div class="form-group">
+					<label for="paymentDate">Payment Date *</label>
+					<input type="date" id="paymentDate" required>
+				</div>
+				<div class="form-group">
+					<label for="paymentMethod">Payment Method *</label>
+					<select id="paymentMethod" required>
+						<option value="">Select method</option>
+						<option value="Cash">Cash</option>
+						<option value="Online">Online (UPI/Bank Transfer)</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="totalAmount">Total Invoice Amount *</label>
+					<input type="number" id="totalAmount" step="0.01" min="0" required>
+				</div>
+				<div class="form-group">
+					<label for="amountReceived">Amount Received *</label>
+					<input type="number" id="amountReceived" step="0.01" min="0" required>
+				</div>
+			</div>
+
+			<div class="form-group" style="margin-bottom: 20px;">
+				<label for="notes">Notes</label>
+				<textarea id="notes" placeholder="Additional notes or transaction details"></textarea>
+			</div>
+
+			<div style="display: flex; gap: 10px; justify-content: flex-end;">
+				<button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+				<button class="btn btn-primary" id="savePaymentBtn">Save Payment</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const storageKey = 'adesaPayments';
+		const getCurrentUser = () => localStorage.getItem('adesaUserEmail');
+
+		const addPaymentBtn = document.getElementById('addPaymentBtn');
+		const backHomeBtn = document.getElementById('backHomeBtn');
+		const paymentModal = document.getElementById('paymentModal');
+		const closeModal = document.getElementById('closeModal');
+		const cancelBtn = document.getElementById('cancelBtn');
+		const savePaymentBtn = document.getElementById('savePaymentBtn');
+		const searchInput = document.getElementById('searchPayments');
+		const tableContainer = document.getElementById('tableContainer');
+
+		const customerNameInput = document.getElementById('customerName');
+		const customerDropdown = document.getElementById('customerDropdown');
+		const invoiceNumberInput = document.getElementById('invoiceNumber');
+		const paymentDateInput = document.getElementById('paymentDate');
+		const paymentMethodInput = document.getElementById('paymentMethod');
+		const totalAmountInput = document.getElementById('totalAmount');
+		const amountReceivedInput = document.getElementById('amountReceived');
+		const notesInput = document.getElementById('notes');
+
+		let selectedCustomer = null;
+		let currentStatusFilter = 'All';
+
+		function getCustomersWithInvoices() {
+			try {
+				const invoiceHistory = JSON.parse(localStorage.getItem('adesaInvoiceHistory') || '[]');
+				const currentUser = getCurrentUser();
+				
+				// Get unique customers from invoice history
+				const customersMap = new Map();
+				invoiceHistory.forEach(inv => {
+					if (!currentUser || inv.customerId) {
+						const key = inv.customerId;
+						if (!customersMap.has(key)) {
+							customersMap.set(key, {
+								customerId: inv.customerId,
+								customerName: inv.customerName,
+								invoiceNumber: inv.invoiceNumber,
+								grandTotal: inv.grandTotal,
+								date: inv.date
+							});
+						}
+					}
+				});
+				
+				return Array.from(customersMap.values()).sort((a, b) => 
+					new Date(b.date) - new Date(a.date)
+				);
+			} catch (e) {
+				console.error('Failed to read invoice history', e);
+				return [];
+			}
+		}
+
+		function filterCustomers(term) {
+			const customers = getCustomersWithInvoices();
+			if (!term) return customers;
+
+			const normalized = term.trim().toLowerCase();
+			return customers.filter(c =>
+				[c.customerId, c.customerName, c.invoiceNumber].some(val =>
+					(val || '').toLowerCase().includes(normalized)
+				)
+			);
+		}
+
+		function showDropdown(customers) {
+			if (!customers.length) {
+				customerDropdown.innerHTML = '<div class="no-results">No customers with invoices found</div>';
+				customerDropdown.classList.add('active');
+				return;
+			}
+
+			customerDropdown.innerHTML = customers.map(c => `
+				<div class="customer-option" data-customer-id="${c.customerId}" data-invoice="${c.invoiceNumber}" data-total="${c.grandTotal}">
+					<strong>${c.customerName}</strong> (${c.customerId})<br>
+					<small style="color: #666;">Invoice: ${c.invoiceNumber} - ₹${parseFloat(c.grandTotal).toFixed(2)}</small>
+				</div>
+			`).join('');
+			customerDropdown.classList.add('active');
+		}
+
+		function hideDropdown() {
+			customerDropdown.classList.remove('active');
+		}
+
+		function selectCustomer(customer) {
+			selectedCustomer = customer;
+			customerNameInput.value = customer.customerName;
+			invoiceNumberInput.value = customer.invoiceNumber || '';
+			totalAmountInput.value = customer.grandTotal || '';
+			hideDropdown();
+		}
+
+		customerNameInput.addEventListener('input', (e) => {
+			const term = e.target.value.trim();
+			if (term.length === 0) {
+				hideDropdown();
+				selectedCustomer = null;
+				return;
+			}
+			const filtered = filterCustomers(term);
+			showDropdown(filtered);
+		});
+
+		customerNameInput.addEventListener('focus', () => {
+			if (customerNameInput.value && !selectedCustomer) {
+				const filtered = filterCustomers(customerNameInput.value);
+				showDropdown(filtered);
+			}
+		});
+
+		customerDropdown.addEventListener('click', (e) => {
+			const option = e.target.closest('.customer-option');
+			if (!option) return;
+
+			const customer = {
+				customerId: option.dataset.customerId,
+				customerName: option.querySelector('strong').textContent,
+				invoiceNumber: option.dataset.invoice,
+				grandTotal: option.dataset.total
+			};
+			selectCustomer(customer);
+		});
+
+		document.addEventListener('click', (e) => {
+			if (!e.target.closest('.customer-search-wrapper')) {
+				hideDropdown();
+			}
+		});
+
+		function getPayments() {
+			try {
+				const currentUser = getCurrentUser();
+				const invoiceHistory = JSON.parse(localStorage.getItem('adesaInvoiceHistory') || '[]');
+				const savedPayments = JSON.parse(localStorage.getItem(storageKey) || '[]');
+				
+				// Create payment records from invoices
+				const paymentMap = new Map();
+				
+				// First, load existing payment data
+				savedPayments.forEach(p => {
+					if (!currentUser || p.userEmail === currentUser) {
+						paymentMap.set(p.invoiceNumber, p);
+					}
+				});
+				
+				// Then add/update from invoice history
+				invoiceHistory.forEach(inv => {
+					const invNumber = inv.invoiceNumber ? inv.invoiceNumber.toString().padStart(4, '0') : '';
+					if (invNumber && (!currentUser || true)) { // All invoices are synced
+						if (!paymentMap.has(invNumber)) {
+							// Create new payment record from invoice
+							paymentMap.set(invNumber, {
+								id: `PAY-${invNumber}`,
+								customerName: inv.customerName || '',
+								invoiceNumber: invNumber,
+								paymentDate: inv.date,
+								paymentMethod: '',
+								totalAmount: inv.grandTotal,
+								amountReceived: 0,
+								notes: '',
+								userEmail: currentUser || '',
+								createdAt: inv.date
+							});
+						} else {
+							// Update existing record with invoice data if not manually set
+							const existing = paymentMap.get(invNumber);
+							if (!existing.totalAmount || existing.totalAmount == 0) {
+								existing.totalAmount = inv.grandTotal;
+							}
+							if (!existing.customerName) {
+								existing.customerName = inv.customerName;
+							}
+						}
+					}
+				});
+				
+				return Array.from(paymentMap.values());
+			} catch (e) {
+				console.error('Failed to read payments', e);
+				return [];
+			}
+		}
+
+		function savePayments(payments) {
+			try {
+				localStorage.setItem(storageKey, JSON.stringify(payments));
+				return true;
+			} catch (e) {
+				console.error('Failed to save payments', e);
+				return false;
+			}
+		}
+
+		function setTodayDate() {
+			const today = new Date();
+			const yyyy = today.getFullYear();
+			const mm = String(today.getMonth() + 1).padStart(2, '0');
+			const dd = String(today.getDate()).padStart(2, '0');
+			paymentDateInput.value = `${yyyy}-${mm}-${dd}`;
+		}
+
+		function updateStats() {
+			const payments = getPayments();
+			
+			let totalReceived = 0;
+			let cashTotal = 0;
+			let onlineTotal = 0;
+			let pendingTotal = 0;
+
+			payments.forEach(p => {
+				const received = parseFloat(p.amountReceived) || 0;
+				const total = parseFloat(p.totalAmount) || 0;
+				const pending = total - received;
+
+				totalReceived += received;
+				pendingTotal += pending;
+
+				if (p.paymentMethod === 'Cash') {
+					cashTotal += received;
+				} else if (p.paymentMethod === 'Online') {
+					onlineTotal += received;
+				}
+			});
+
+			document.getElementById('totalReceived').textContent = `₹${totalReceived.toFixed(2)}`;
+			document.getElementById('cashTotal').textContent = `₹${cashTotal.toFixed(2)}`;
+			document.getElementById('onlineTotal').textContent = `₹${onlineTotal.toFixed(2)}`;
+			document.getElementById('pendingTotal').textContent = `₹${pendingTotal.toFixed(2)}`;
+		}
+
+		function getPaymentStatus(totalAmount, amountReceived) {
+			const total = parseFloat(totalAmount) || 0;
+			const received = parseFloat(amountReceived) || 0;
+
+			if (received >= total) return 'Paid';
+			if (received > 0) return 'Partial';
+			return 'Pending';
+		}
+
+		function formatDate(dateStr) {
+			const date = new Date(dateStr);
+			const day = String(date.getDate()).padStart(2, '0');
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const year = date.getFullYear();
+			return `${day}-${month}-${year}`;
+		}
+
+		function renderPayments(filterTerm = '', statusFilter = 'All') {
+			const payments = getPayments().sort((a, b) => new Date(b.paymentDate) - new Date(a.paymentDate));
+			
+			let filtered = payments;
+			
+			// Apply search filter
+			if (filterTerm.trim()) {
+				const term = filterTerm.toLowerCase().trim();
+				filtered = filtered.filter(p => {
+					return [p.customerName, p.invoiceNumber, p.paymentDate, p.paymentMethod, p.notes]
+						.some(val => (val || '').toLowerCase().includes(term));
+				});
+			}
+			
+			// Apply status filter
+			if (statusFilter !== 'All') {
+				filtered = filtered.filter(p => {
+					const status = getPaymentStatus(p.totalAmount, p.amountReceived);
+					return status === statusFilter;
+				});
+			}
+
+			if (!filtered.length) {
+			tableContainer.innerHTML = `
+				<div class="empty-state">
+					No payments found
+					<br><br>
+					<button class="btn btn-primary" onclick="window.location.href='homepage.html'" style="margin-top: 10px;">
+						Go Back to Home
+					</button>
+				</div>
+			`;
+			}
+
+			const rows = filtered.map((p, idx) => {
+				const status = getPaymentStatus(p.totalAmount, p.amountReceived);
+				const statusClass = status === 'Paid' ? 'badge-paid' : status === 'Partial' ? 'badge-partial' : 'badge-pending';
+				const methodClass = p.paymentMethod === 'Cash' ? 'badge-cash' : 'badge-online';
+				const balance = (parseFloat(p.totalAmount) || 0) - (parseFloat(p.amountReceived) || 0);
+
+				return `
+					<tr>
+						<td>${idx + 1}</td>
+						<td>${p.customerName}</td>
+						<td>${p.invoiceNumber || '—'}</td>
+						<td>${formatDate(p.paymentDate)}</td>
+						<td>₹${parseFloat(p.totalAmount).toFixed(2)}</td>
+						<td>
+							<input type="number" class="amount-received-input" data-id="${p.id}" value="${p.amountReceived || 0}" min="0" step="0.01" style="width: 100px; padding: 4px 8px; border: 1px solid #e0e0e0; border-radius: 4px;">
+						</td>
+						<td>₹${balance.toFixed(2)}</td>
+						<td>
+							<input type="date" class="payment-date-input" data-id="${p.id}" value="${p.paymentReceivedDate || ''}" style="padding: 4px 8px; border: 1px solid #e0e0e0; border-radius: 4px;">
+						</td>
+						<td>
+							<select class="payment-method-select" data-id="${p.id}" style="padding: 4px 8px; border: 1px solid #e0e0e0; border-radius: 4px;">
+								<option value="" ${!p.paymentMethod ? 'selected' : ''}>-</option>
+								<option value="Cash" ${p.paymentMethod === 'Cash' ? 'selected' : ''}>Cash</option>
+								<option value="Online" ${p.paymentMethod === 'Online' ? 'selected' : ''}>Online</option>
+							</select>
+						</td>
+						<td><span class="badge ${statusClass}">${status}</span></td>
+					</tr>
+				`;
+			}).join('');
+
+			tableContainer.innerHTML = `
+				<table>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Customer</th>
+							<th>Invoice #</th>
+							<th>Invoice Date</th>
+							<th>Amount Payable</th>
+							<th>Amount Received</th>
+							<th>Balance</th>
+							<th>Payment Date</th>
+							<th>Method</th>
+							<th>
+								Status
+								<br>
+								<select id="statusFilter" style="padding: 4px 8px; border: 1px solid #e0e0e0; border-radius: 4px; margin-top: 5px; font-size: 12px;">
+									<option value="All" ${statusFilter === 'All' ? 'selected' : ''}>All</option>
+									<option value="Paid" ${statusFilter === 'Paid' ? 'selected' : ''}>Paid</option>
+									<option value="Partial" ${statusFilter === 'Partial' ? 'selected' : ''}>Partial</option>
+									<option value="Pending" ${statusFilter === 'Pending' ? 'selected' : ''}>Pending</option>
+								</select>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						${rows}
+					</tbody>
+				</table>
+			`;
+
+			// Add event listener for status filter
+			const statusFilterSelect = document.getElementById('statusFilter');
+			if (statusFilterSelect) {
+				statusFilterSelect.addEventListener('change', (e) => {
+					currentStatusFilter = e.target.value;
+					renderPayments(searchInput.value, currentStatusFilter);
+				});
+			}
+
+			// Add event listeners for inline editing
+			const amountInputs = tableContainer.querySelectorAll('.amount-received-input');
+			amountInputs.forEach(input => {
+				input.addEventListener('change', (e) => {
+					updatePaymentAmount(e.target.dataset.id, parseFloat(e.target.value) || 0);
+				});
+			});
+
+			const methodSelects = tableContainer.querySelectorAll('.payment-method-select');
+			methodSelects.forEach(select => {
+				select.addEventListener('change', (e) => {
+					updatePaymentMethod(e.target.dataset.id, e.target.value);
+				});
+			});
+
+			const dateInputs = tableContainer.querySelectorAll('.payment-date-input');
+			dateInputs.forEach(input => {
+				input.addEventListener('change', (e) => {
+					updatePaymentDate(e.target.dataset.id, e.target.value);
+				});
+			});
+		}
+
+		function updatePaymentAmount(paymentId, newAmount) {
+			let allPayments = JSON.parse(localStorage.getItem(storageKey) || '[]');
+			let payment = allPayments.find(p => p.id === paymentId);
+			
+			if (payment) {
+				payment.amountReceived = newAmount;
+				// Auto-fill payment date when balance becomes zero
+				const balance = (parseFloat(payment.totalAmount) || 0) - (parseFloat(newAmount) || 0);
+				if (balance === 0 && !payment.paymentReceivedDate) {
+					const today = new Date().toISOString().split('T')[0];
+					payment.paymentReceivedDate = today;
+				}
+			} else {
+				// Payment doesn't exist in saved payments, create it
+				const currentPayment = getPayments().find(p => p.id === paymentId);
+				if (currentPayment) {
+					currentPayment.amountReceived = newAmount;
+					// Auto-fill payment date when balance becomes zero
+					const balance = (parseFloat(currentPayment.totalAmount) || 0) - (parseFloat(newAmount) || 0);
+					if (balance === 0 && !currentPayment.paymentReceivedDate) {
+						const today = new Date().toISOString().split('T')[0];
+						currentPayment.paymentReceivedDate = today;
+					}
+					allPayments.push(currentPayment);
+				}
+			}
+			
+			if (savePayments(allPayments)) {
+				renderPayments(searchInput.value, currentStatusFilter);
+				updateStats();
+			}
+		}
+
+		function updatePaymentMethod(paymentId, method) {
+			let allPayments = JSON.parse(localStorage.getItem(storageKey) || '[]');
+			let payment = allPayments.find(p => p.id === paymentId);
+			
+			if (payment) {
+				payment.paymentMethod = method;
+			} else {
+				// Payment doesn't exist in saved payments, create it
+				const currentPayment = getPayments().find(p => p.id === paymentId);
+				if (currentPayment) {
+					currentPayment.paymentMethod = method;
+					allPayments.push(currentPayment);
+				}
+			}
+			
+			if (savePayments(allPayments)) {
+				renderPayments(searchInput.value, currentStatusFilter);
+				updateStats();
+			}
+		}
+
+		function updatePaymentDate(paymentId, date) {
+			let allPayments = JSON.parse(localStorage.getItem(storageKey) || '[]');
+			let payment = allPayments.find(p => p.id === paymentId);
+			
+			if (payment) {
+				payment.paymentReceivedDate = date;
+			} else {
+				// Payment doesn't exist in saved payments, create it
+				const currentPayment = getPayments().find(p => p.id === paymentId);
+				if (currentPayment) {
+					currentPayment.paymentReceivedDate = date;
+					allPayments.push(currentPayment);
+				}
+			}
+			
+			if (savePayments(allPayments)) {
+				renderPayments(searchInput.value, currentStatusFilter);
+				updateStats();
+			}
+		}
+
+		function clearForm() {
+			selectedCustomer = null;
+			customerNameInput.value = '';
+			invoiceNumberInput.value = '';
+			totalAmountInput.value = '';
+			amountReceivedInput.value = '';
+			notesInput.value = '';
+			paymentMethodInput.value = '';
+			setTodayDate();
+		}
+
+		addPaymentBtn.addEventListener('click', () => {
+			clearForm();
+			paymentModal.classList.add('active');
+		});
+
+		closeModal.addEventListener('click', () => {
+			paymentModal.classList.remove('active');
+		});
+
+		cancelBtn.addEventListener('click', () => {
+			paymentModal.classList.remove('active');
+		});
+
+		savePaymentBtn.addEventListener('click', () => {
+			if (!customerNameInput.value.trim()) {
+				alert('Please enter customer name');
+				return;
+			}
+
+			if (!paymentMethodInput.value) {
+				alert('Please select payment method');
+				return;
+			}
+
+			if (!totalAmountInput.value || !amountReceivedInput.value) {
+				alert('Please enter amounts');
+				return;
+			}
+
+			const currentUser = getCurrentUser();
+			if (!currentUser) {
+				alert('Please log in first');
+				window.location.href = 'login.html';
+				return;
+			}
+
+			const payment = {
+				id: `PAY-${Date.now()}`,
+				customerName: customerNameInput.value.trim(),
+				invoiceNumber: invoiceNumberInput.value.trim(),
+				paymentDate: paymentDateInput.value,
+				paymentMethod: paymentMethodInput.value,
+				totalAmount: totalAmountInput.value,
+				amountReceived: amountReceivedInput.value,
+				notes: notesInput.value.trim(),
+				userEmail: currentUser,
+				createdAt: new Date().toISOString()
+			};
+
+			const allPayments = JSON.parse(localStorage.getItem(storageKey) || '[]');
+			allPayments.push(payment);
+			
+			if (savePayments(allPayments)) {
+				alert('Payment recorded successfully!');
+				paymentModal.classList.remove('active');
+				renderPayments();
+				updateStats();
+			} else {
+				alert('Failed to save payment. Please try again.');
+			}
+		});
+
+		searchInput.addEventListener('input', (e) => {
+			renderPayments(e.target.value, currentStatusFilter);
+		});
+
+		backHomeBtn.addEventListener('click', () => {
+			window.location.href = 'homepage.html';
+		});
+
+		// Initialize
+		setTodayDate();
+		renderPayments('', 'All');
+		updateStats();
+	</script>
+</body>
+</html>
